@@ -9,6 +9,13 @@ describe('Test the root path', () => {
     });
 });
 
+describe('Test the gif endpoints', () => {
+    test('It should list out all gifs', async () => {
+        const response = await request(app).get('/gifs');
+        expect(response.statusCode).toBe(200);
+    });
+});
+
 describe('Test the users endpoints', () => {
     test('It should create a new user', async () => {
         const response = await request(app)

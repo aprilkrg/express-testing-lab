@@ -9,13 +9,10 @@ router.get('/', (req, res) => {
 	});
 });
 
-router.get('/:id', async (req, res) => {
-	try {
-		const gif = await Gif.findById(req.params.id);
+router.get('/:id', (req, res) => {
+	Gif.findById(req.params.id).then((gif) => {
 		res.json(gif);
-	} catch(err) {
-		return err;
-	};
+	});
 });
 
 router.post('/', (req, res) => {

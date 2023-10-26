@@ -1,15 +1,30 @@
 const request = require('supertest');
 const { app, server } = require('../app');
-const db = require('../db/connection');
+// const db = require('../db/connection');
 const Gif = require('../db/schema');
 
-// describe('Test the root path', () => {
-//     test('It should respond with "Hello World!"', async () => {
-//         const response = await request(app).get('/');
-//         expect(response.text).toBe('Hello World!');
-//         expect(response.statusCode).toBe(200);
-//     });
-// });
+// TRYING TO FIND MEMORY LEAK
+require('dotenv').config();
+const mongoose = require('mongoose');
+const mongoURI = process.env.DATABASE_URL;
+const db = mongoose.connection;
+
+beforeAll(async () => {
+    try {
+        await mongoose.connect(mongoURI);
+    } catch(err) {
+        return err
+    };
+});
+
+
+describe('Test the root path', () => {
+    test('It should respond with "Hello World!"', async () => {
+        const response = await request(app).get('/');
+        expect(response.text).toBe('Hello World!');
+        expect(response.statusCode).toBe(200);
+    });
+});
 
 describe('Test the gif endpoints', () => {
     test('list out all gifs', async () => {
@@ -21,28 +36,25 @@ describe('Test the gif endpoints', () => {
         expect(arr).toHaveLength(allGifs.length);
     });
 
-    test('show one gif by id', async () => {
-        const response = await request(app);
-        const allGifs = await Gif.find({});
-        // allGifs.forEach(async (gif) => {
-        //     const id = await db.Types.ObjectId(gif._id);
-        //     response = await response.get(`/gifs/${id}`);
-        //     expect(response.statusCode).toBe(200);
-        //     expect(gif).toBeInstanceOf(Gif);
-        // });
-        for(let i = 0; i < allGifs.length; i++) {
-            const id = await db.Types.ObjectId(allGifs[i]._id);
-            const routeRes = await response.get(`/gifs/${id}`);
-            expect(routeRes.statusCode).toBe(200);
-            expect(allGifs[i]).toBeInstanceOf(Gif);
-        };
-    });
+    // test('show one gif by id', async () => {
+    //     const response = await request(app);
+    //     const allGifs = await Gif.find({});
+        // for(let i = 0; i < allGifs.length; i++) {
+        //     const id = await db.Types.ObjectId(allGifs[i]._id);
+        //     const routeRes = await response.get(`/gifs/${id}`);
+        //     expect(routeRes.statusCode).toBe(200);
+        //     expect(allGifs[i]).toBeInstanceOf(Gif);
+        // };
+        // expect(response.statusCode).toBe(200);
+    // });
+    // use test .each() to solve memory leak
 });
 
 
 afterAll(done => {
-    server.close();
-    // process.exit()
-    db.connection.close();
+    mongoose.connection.close();
+    // db.connection.close();
+    global.gc && global.gc()
+    server.close(done);
     done();
 });

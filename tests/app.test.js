@@ -1,13 +1,9 @@
 const request = require('supertest');
-const { app, server } = require('../app');
-// const db = require('../db/connection');
-const Gif = require('../db/schema');
-
-// TRYING TO FIND MEMORY LEAK
-require('dotenv').config();
 const mongoose = require('mongoose');
+const { app, server } = require('../app');
+const Gif = require('../db/schema');
+require('dotenv').config();
 const mongoURI = process.env.DATABASE_URL;
-const db = mongoose.connection;
 
 beforeAll(async () => {
     try {
@@ -51,10 +47,17 @@ describe('Test the gif endpoints', () => {
     // use test .each() to solve memory leak
     test('show one gif by :id', async () => {
         try {
-            const response = await request(app).get('/gifs');
-            expect(response.statusCode).toBe(200);
-            // const allGifs = await Gif.find({});
-            // return allGifs;
+            // const response = await request(app).get('/gifs/6539a34eedb08fd083074f9d');
+            // expect(response.statusCode).toBe(200);
+            // expect(response).toBeInstanceOf(Gif);
+
+            const allGifs = await Gif.find({});
+            for(let i = 0; i < allGifs.length; i++) {
+                const id = await db.Types.ObjectId(allGifs[i]._id);
+                const routeRes = await response.get(`/gifs/${id}`);
+                expect(routeRes.statusCode).toBe(200);
+                expect(allGifs[i]).toBeInstanceOf(Gif);
+            };
         } catch(err) {
             return err;
         };
@@ -64,7 +67,6 @@ describe('Test the gif endpoints', () => {
 
 afterAll(done => {
     mongoose.connection.close();
-    // db.connection.close();
     global.gc && global.gc()
     server.close(done);
     done();

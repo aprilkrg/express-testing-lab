@@ -3,9 +3,7 @@ const mongoose = require('mongoose');
 const mongoURI = process.env.DATABASE_URL;
 const db = mongoose.connection;
 
-// TRYING TO FIND MEMORY LEAK
 // mongoose.connect(mongoURI);
-
 db.on('error', (err) => console.log(err.message + ' is Mongod not running?'));
 // db.on('connected', () => console.log('mongo connected at: ', mongoURI));
 // db.on('open', () => {

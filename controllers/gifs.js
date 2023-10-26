@@ -12,10 +12,9 @@ router.get('/', (req, res) => {
 router.get('/:id', async (req, res) => {
 	try {
 		const gif = await Gif.findById(req.params.id);
-		console.log(gif._id);
 		res.json(gif);
 	} catch(err) {
-		console.log(err);
+		return err;
 	};
 });
 

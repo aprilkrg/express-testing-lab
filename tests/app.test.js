@@ -8,11 +8,10 @@ const mongoURI = process.env.DATABASE_URL;
 beforeAll(async () => {
     try {
         await mongoose.connect(mongoURI);
-    } catch(err) {
+    } catch (err) {
         return err
     };
 });
-
 
 describe('Test the root path', () => {
     test('It should respond with "Hello World!"', async () => {
@@ -23,7 +22,7 @@ describe('Test the root path', () => {
 });
 
 describe('Test the gif endpoints', () => {
-    test('list out all gifs', async () => {
+    test('GET /gifs', async () => {
         let response = await request(app);
         response = await response.get('/gifs');
         const arr = JSON.parse(response.text);
@@ -31,33 +30,28 @@ describe('Test the gif endpoints', () => {
         expect(response.statusCode).toBe(200);
         expect(arr).toHaveLength(allGifs.length);
     });
-    /*
-    test('show one gif by id', async () => {
-        const response = await request(app);
-        const allGifs = await Gif.find({});
-        // for(let i = 0; i < allGifs.length; i++) {
-        //     const id = await db.Types.ObjectId(allGifs[i]._id);
-        //     const routeRes = await response.get(`/gifs/${id}`);
-        //     expect(routeRes.statusCode).toBe(200);
-        //     expect(allGifs[i]).toBeInstanceOf(Gif);
-        // };
-        // expect(response.statusCode).toBe(200);
-    });
-    */
-    // use test .each() to solve memory leak
-    test('show one gif by :id', async () => {
-        try {
-            // const response = await request(app).get('/gifs/6539a34eedb08fd083074f9d');
-            // expect(response.statusCode).toBe(200);
-            // expect(response).toBeInstanceOf(Gif);
 
+    test('GET /gifs/:id', async () => {
+        try {
             const allGifs = await Gif.find({});
-            for(let i = 0; i < allGifs.length; i++) {
+            for (let i = 0; i < allGifs.length; i++) {
                 const id = await db.Types.ObjectId(allGifs[i]._id);
                 const routeRes = await response.get(`/gifs/${id}`);
                 expect(routeRes.statusCode).toBe(200);
                 expect(allGifs[i]).toBeInstanceOf(Gif);
             };
+        } catch (err) {
+            return err;
+        };
+    });
+
+    test('POST /gifs', async () => {
+        try {
+            const response = await request(app).post('/gifs').send({
+                name: "placedog",
+                url: "https://placedog.net/500"
+            });
+            expect(res.statusCode).toBe(201)
         } catch(err) {
             return err;
         };
@@ -71,3 +65,9 @@ afterAll(done => {
     server.close(done);
     done();
 });
+
+/*
+SOURCES
+https://www.albertgao.xyz/2017/05/24/how-to-test-expressjs-with-jest-and-supertest/
+https://www.freecodecamp.org/news/how-to-test-in-express-and-mongoose-apps/
+*/

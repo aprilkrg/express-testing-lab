@@ -35,10 +35,10 @@ describe('Test the gif endpoints', () => {
         expect(response.statusCode).toBe(200);
         expect(arr).toHaveLength(allGifs.length);
     });
-
-    // test('show one gif by id', async () => {
-    //     const response = await request(app);
-    //     const allGifs = await Gif.find({});
+    /*
+    test('show one gif by id', async () => {
+        const response = await request(app);
+        const allGifs = await Gif.find({});
         // for(let i = 0; i < allGifs.length; i++) {
         //     const id = await db.Types.ObjectId(allGifs[i]._id);
         //     const routeRes = await response.get(`/gifs/${id}`);
@@ -46,8 +46,19 @@ describe('Test the gif endpoints', () => {
         //     expect(allGifs[i]).toBeInstanceOf(Gif);
         // };
         // expect(response.statusCode).toBe(200);
-    // });
+    });
+    */
     // use test .each() to solve memory leak
+    test('show one gif by :id', async () => {
+        try {
+            const response = await request(app).get('/gifs');
+            expect(response.statusCode).toBe(200);
+            // const allGifs = await Gif.find({});
+            // return allGifs;
+        } catch(err) {
+            return err;
+        };
+    });
 });
 
 

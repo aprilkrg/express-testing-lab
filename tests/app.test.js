@@ -13,7 +13,6 @@ describe('Test the root path', () => {
 
 describe('Test the gif endpoints', () => {
     test('It should list out all gifs', async () => {
-        // const response = await request(app).get('/gifs');
         let response = await request(app);
         response = await response.get('/gifs');
         const arr = JSON.parse(response.text);
@@ -21,11 +20,15 @@ describe('Test the gif endpoints', () => {
         expect(response.statusCode).toBe(200);
         expect(arr).toHaveLength(allGifs.length);
     });
-    // test('It should show one gif by id', async () => {
-        // let response = await request(app);
-        // response = await response.get('/gifs');
-    //     console.log(response)
-    // });
+
+    test('It should show one gif by id', async () => {
+        let response = await request(app);
+        // console.log(response, server);
+        const oneGif = await Gif.find({})
+        // console.log(oneGif[0]._id instanceof db.Types.ObjectId);
+        const id = db.Types.ObjectId(oneGif[0]._id);
+        response = await response.get(`/gifs/${id}`);
+    });
 });
 
 

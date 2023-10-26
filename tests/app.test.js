@@ -44,6 +44,7 @@ describe('Test the gif route endpoints', () => {
                 const routeRes = await response.get(`/gifs/${id}`);
                 expect(routeRes.statusCode).toBe(200);
                 expect(allGifs[i]).toBeInstanceOf(Gif);
+                expect(allGifs[i]).toHaveProperty('url');
             };
         } catch (err) {
             return err;
@@ -81,7 +82,7 @@ describe('Test the gif route endpoints', () => {
         try {
             const gif = await Gif.find({name: 'son of placedog'});
             const response = await request(app).delete(`/gifs/${gif[0]._id}`);
-            expect(response.statusCode).toBe(200);
+            expect(response.statusCode).toBe(204);
         } catch(err) {
             return err;
         };

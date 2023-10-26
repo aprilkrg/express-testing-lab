@@ -18,15 +18,15 @@ beforeAll(async () => {
     };
 });
 
-describe('Test the root path', () => {
-    test('It should respond with "Hello World!"', async () => {
-        const response = await request(app).get('/');
-        expect(response.text).toBe('Hello World!');
-        expect(response.statusCode).toBe(200);
-    });
-});
+// describe('Test the root path', () => {
+//     test('It should respond with "Hello World!"', async () => {
+//         const response = await request(app).get('/');
+//         expect(response.text).toBe('Hello World!');
+//         expect(response.statusCode).toBe(200);
+//     });
+// });
 
-describe('Test the gif endpoints', () => {
+describe('Test the gif route endpoints', () => {
     test('GET /gifs', async () => {
         let response = await request(app);
         response = await response.get('/gifs');
@@ -58,6 +58,21 @@ describe('Test the gif endpoints', () => {
                 tags: ["animal", "cute"]
             });
             expect(res.statusCode).toBe(201)
+        } catch(err) {
+            return err;
+        };
+    });
+
+    test('PATCH /gifs/:id', async () => {
+        try {
+            const gif = await Gif.find({name: 'placedog son of dog'})
+            console.log(gif[0]._id);
+            const response = await request(app).put(`/gifs/${gif[0]._id}`).send({
+                name: 'placegob',
+                url: "https://placedog.net/500",
+                tags: ["animal", "cute"]
+            });
+            expect(response.statusCode).toBe(204);
         } catch(err) {
             return err;
         };

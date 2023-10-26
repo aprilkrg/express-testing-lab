@@ -1,7 +1,7 @@
 require('dotenv').config();
 const mongoose = require('mongoose');
-const mongoURI = process.env.DATABASE_URL;
-const db = mongoose.connection;
+// const mongoURI = process.env.DATABASE_URL;
+// const db = mongoose.connection;
 
 // mongoose.connect(mongoURI);
 // db.on('error', (err) => console.log(err.message + ' is Mongod not running?'));

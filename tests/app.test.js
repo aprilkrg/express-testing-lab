@@ -5,9 +5,14 @@ const Gif = require('../db/schema');
 require('dotenv').config();
 const mongoURI = process.env.DATABASE_URL;
 
+const seedData = require('../db/seeds.json');
+
+
 beforeAll(async () => {
     try {
         await mongoose.connect(mongoURI);
+        await Gif.deleteMany({});
+        await Gif.insertMany(seedData);
     } catch (err) {
         return err
     };
@@ -48,8 +53,9 @@ describe('Test the gif endpoints', () => {
     test('POST /gifs', async () => {
         try {
             const response = await request(app).post('/gifs').send({
-                name: "placedog",
-                url: "https://placedog.net/500"
+                name: "placedog son of dog",
+                url: "https://placedog.net/500",
+                tags: ["animal", "cute"]
             });
             expect(res.statusCode).toBe(201)
         } catch(err) {

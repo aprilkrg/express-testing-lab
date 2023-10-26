@@ -1,5 +1,7 @@
 const request = require('supertest');
 const { app, server } = require('../app');
+const db = require('../db/connection');
+const Gif = require('../db/schema');
 
 describe('Test the root path', () => {
     test('It should respond with "Hello World!"', async () => {
@@ -11,37 +13,25 @@ describe('Test the root path', () => {
 
 describe('Test the gif endpoints', () => {
     test('It should list out all gifs', async () => {
-        const response = await request(app).get('/gifs');
+        // const response = await request(app).get('/gifs');
+        let response = await request(app);
+        response = await response.get('/gifs');
+        const arr = JSON.parse(response.text);
+        const allGifs = await Gif.find({});
         expect(response.statusCode).toBe(200);
+        expect(arr).toHaveLength(allGifs.length);
     });
+    // test('It should show one gif by id', async () => {
+        // let response = await request(app);
+        // response = await response.get('/gifs');
+    //     console.log(response)
+    // });
 });
-
-// describe('Test the users endpoints', () => {
-//     test('It should create a new user', async () => {
-//         const response = await request(app)
-//             .post('/users')
-//             .send({ name: 'John Doe', email: 'john.doe@example.com' });
-//         expect(response.body).toEqual({ name: 'John Doe', email: 'john.doe@example.com' });
-//     });
-
-//     test('It should update a user', async () => {
-//         const response = await request(app)
-//             .put('/users/123')
-//             .send({ name: 'Jane Doe', email: 'jane.doe@example.com' });
-//         expect(response.body).toEqual({ id: '123', name: 'Jane Doe', email: 'jane.doe@example.com' });
-//         expect(response.statusCode).toBe(200);
-//     });
-
-//     test('It should delete a user', async () => {
-//         const response = await request(app).delete('/users/123');
-//         expect(response.body).toEqual({ id: '123' });
-//         expect(response.statusCode).toBe(200);
-//     });
-// })
 
 
 afterAll(done => {
-    // Closing the connection allows Jest to exit successfully.
-    server.close()
-    done()
-})
+    server.close();
+    // process.exit()
+    db.connection.close();
+    done();
+});

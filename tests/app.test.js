@@ -53,7 +53,7 @@ describe('Test the gif route endpoints', () => {
     test('POST /gifs', async () => {
         try {
             const response = await request(app).post('/gifs').send({
-                name: "placedog son of dog",
+                name: "placedog",
                 url: "https://placedog.net/500",
                 tags: ["animal", "cute"]
             });
@@ -65,14 +65,23 @@ describe('Test the gif route endpoints', () => {
 
     test('PATCH /gifs/:id', async () => {
         try {
-            const gif = await Gif.find({name: 'placedog son of dog'})
-            console.log(gif[0]._id);
+            const gif = await Gif.find({name: 'placedog'});
             const response = await request(app).put(`/gifs/${gif[0]._id}`).send({
-                name: 'placegob',
+                name: 'son of placedog',
                 url: "https://placedog.net/500",
                 tags: ["animal", "cute"]
             });
             expect(response.statusCode).toBe(204);
+        } catch(err) {
+            return err;
+        };
+    });
+
+    test('DELETE /gifs/:id', async () => {
+        try {
+            const gif = await Gif.find({name: 'son of placedog'});
+            const response = await request(app).delete(`/gifs/${gif[0]._id}`);
+            expect(response.statusCode).toBe(200);
         } catch(err) {
             return err;
         };
